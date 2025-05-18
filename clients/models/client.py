@@ -1,14 +1,14 @@
-import uuid
 from django.db import models
+import uuid
 
 class Client(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    xero_contact_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     email = models.EmailField(blank=True, null=True)
     phone = models.CharField(max_length=50, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     is_account_customer = models.BooleanField(default=False)
+    xero_contact_id = models.CharField(max_length=255, unique=True)
     raw_json = models.JSONField(blank=True, null=True)
     xero_last_modified = models.DateTimeField(null=True)
     xero_last_synced = models.DateTimeField(null=True)
@@ -18,8 +18,21 @@ class Client(models.Model):
 
     class Meta:
         db_table = 'workflow_client'
-        verbose_name = 'Client'
-        verbose_name_plural = 'Clients'
+
+    def __str__(self):
+        return self.name
+
+class Supplier(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=50, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    xero_contact_id = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    raw_json = models.JSONField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'workflow_supplier'
 
     def __str__(self):
         return self.name

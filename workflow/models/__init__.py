@@ -2,7 +2,7 @@
 
 from .adjustment_entry import AdjustmentEntry
 from .ai_provider import AIProvider
-from .client import Client, Supplier
+from clients.models import Client
 from .company_defaults import CompanyDefaults
 from .invoice import BaseXeroInvoiceDocument, BaseLineItem, Invoice, Bill, CreditNote, InvoiceLineItem, BillLineItem, CreditNoteLineItem
 from .job import Job

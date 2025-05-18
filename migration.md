@@ -9,3 +9,4 @@
 6. Templates
 7. Static
 8. Remover proxy models
+
