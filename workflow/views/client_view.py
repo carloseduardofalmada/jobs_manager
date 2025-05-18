@@ -28,7 +28,8 @@ from workflow.api.xero.sync import (
 )
 from workflow.api.xero.xero import get_valid_token, api_client, get_tenant_id
 from workflow.forms import ClientForm
-from workflow.models import Client, Invoice, Bill, Job
+from workflow.models import Invoice, Bill, Job
+from clients.models import Client
 
 # from workflow.tables import ClientTable
 

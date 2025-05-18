@@ -29,11 +29,13 @@ INSTALLED_APPS = [
     "workflow",
     "simple_history",
     "accounts",
-    "rest_framework"
-    "timesheet"
+    "rest_framework",
+    "timesheet",
+    "clients",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -57,7 +59,10 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
 }
 
 if ENABLE_JWT_AUTH:
@@ -98,7 +103,8 @@ LOGIN_EXEMPT_URLS = [
     "accounts:password_reset_done",
     "accounts:reset",
     "accounts:password_reset_confirm",
-    "accounts:password_reset_complete"
+    "accounts:password_reset_complete",
+    #add if there is a public endpoint "clients:api-client-search",
 ]
 
 LOGGING = {
@@ -152,6 +158,14 @@ LOGGING = {
             "backupCount": 5,
             "formatter": "verbose",
         },
+        "clients_file": {
+            "level": "DEBUG",
+            "class": "concurrent_log_handler.ConcurrentRotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "logs/clients_debug.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+            "formatter": "verbose",
+        },
     },
     "loggers": {
         # your SQL logger only writes to sql_file, and bubbles up to root
@@ -182,6 +196,11 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": True,
         },
+        "clients": {
+            "handlers": ["clients_file", "app_file"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
     },
     "root": {
         "handlers": ["console", "app_file"],
@@ -203,8 +222,8 @@ TEMPLATES = [
             
             os.path.join(BASE_DIR, "workflow/templates"),
             os.path.join(BASE_DIR, "accounts/templates"),
-        ,
             os.path.join(BASE_DIR, "timesheet/templates"),
+            os.path.join(BASE_DIR, "clients/templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -303,7 +322,8 @@ STATICFILES_DIRS = [
     ("fullcalendar-interaction", "node_modules/@fullcalendar/interaction"),
     ("fullcalendar-timegrid", "node_modules/@fullcalendar/timegrid"),
     # Chart.js (JS)
-    ("chart.js", "node_modules/chart.js/dist")
+    ("chart.js", "node_modules/chart.js/dist"),
+    os.path.join(BASE_DIR, "clients/static"),
 ]
 
 # Default primary key field type

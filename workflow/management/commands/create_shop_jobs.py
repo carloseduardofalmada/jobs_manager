@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from workflow.models import Client, Job, CompanyDefaults
-
+from workflow.models import Job, CompanyDefaults
+from clients.models import Client
 
 class Command(BaseCommand):
     help = "Create shop jobs for internal purposes"

@@ -17,7 +17,7 @@ class Client(models.Model):
     xero_tenant_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        db_table = 'clients_client'
+        db_table = 'workflow_client'
         verbose_name = 'Client'
         verbose_name_plural = 'Clients'
 

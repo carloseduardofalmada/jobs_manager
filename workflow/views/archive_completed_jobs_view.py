@@ -16,6 +16,7 @@ from rest_framework.pagination import PageNumberPagination
 
 from workflow.models.job import Job
 from workflow.serializers.job_serializer import CompleteJobSerializer
+from clients.models import Client  # Update any Client imports here too
 from workflow.services.job_service import archive_complete_jobs, get_paid_complete_jobs
 
 logger = logging.getLogger(__name__)

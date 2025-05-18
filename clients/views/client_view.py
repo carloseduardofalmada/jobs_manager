@@ -1,6 +1,7 @@
 from django.views.generic import ListView, UpdateView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from ..models import Client
 from ..forms import ClientForm
 
@@ -28,3 +29,7 @@ class UnusedClientsView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Client.objects.filter(job__isnull=True)
+
+def all_clients(request):
+    clients = Client.objects.all().values('id', 'name')
+    return JsonResponse(list(clients), safe=False)

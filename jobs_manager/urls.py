@@ -27,6 +27,7 @@ urlpatterns = [
     path("", include("workflow.urls")),
     path("accounts/", include("accounts.urls")),
     path("timesheets/", include("timesheet.urls")),
+    path("clients/", include("clients.urls")),
 ]
 
 if settings.DEBUG:

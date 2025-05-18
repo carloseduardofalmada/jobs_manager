@@ -242,7 +242,8 @@ class Command(BaseCommand):
         
         try:
             # Import models here to avoid circular imports
-            from workflow.models import Client, Job
+            from workflow.models import Job
+            from clients.models import Client
             
             # Create company defaults if needed
             if not CompanyDefaults.objects.exists():
