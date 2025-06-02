@@ -6,9 +6,9 @@ from django.db import transaction
 from django.http import JsonResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods
-from django.contrib.auth.decorators import login_required
 
-from workflow.models import Job, Stock, MaterialEntry, JobPricing, CompanyDefaults
+from workflow.models import Stock, CompanyDefaults
+from job.models import Job, JobPricing, MaterialEntry
 from workflow.enums import JobPricingStage
 
 logger = logging.getLogger(__name__)

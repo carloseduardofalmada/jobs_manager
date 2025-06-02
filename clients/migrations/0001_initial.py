@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Client',
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)),
+                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('name', models.CharField(max_length=255)),
                 ('email', models.EmailField(blank=True, null=True)),
                 ('phone', models.CharField(max_length=50, blank=True, null=True)),
@@ -28,6 +28,21 @@ class Migration(migrations.Migration):
                 'db_table': 'workflow_client',
             },
         ),
+        migrations.CreateModel(
+            name='Supplier',
+            fields=[
+                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('name', models.CharField(max_length=255)),
+                ('email', models.EmailField(blank=True, max_length=254, null=True)),
+                ('phone', models.CharField(blank=True, max_length=50, null=True)),
+                ('address', models.TextField(blank=True, null=True)),
+                ('xero_contact_id', models.CharField(blank=True, max_length=255, null=True, unique=True)),
+                ('raw_json', models.JSONField(blank=True, null=True)),
+            ],
+            options={
+                'db_table': 'workflow_supplier',
+            },
+        ),
     ]
 
     database_operations = []
@@ -38,3 +53,4 @@ class Migration(migrations.Migration):
             state_operations=state_operations
         )
     ]
+    

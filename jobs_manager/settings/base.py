@@ -26,12 +26,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django_tables2",
-    "workflow",
     "simple_history",
+    "workflow",
     "accounts",
     "rest_framework",
     "timesheet",
-    "clients",
+    "job",
+    "clients"
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -223,6 +224,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, "workflow/templates"),
             os.path.join(BASE_DIR, "accounts/templates"),
             os.path.join(BASE_DIR, "timesheet/templates"),
+            os.path.join(BASE_DIR, "job/templates"),
             os.path.join(BASE_DIR, "clients/templates"),
         ],
         "APP_DIRS": True,

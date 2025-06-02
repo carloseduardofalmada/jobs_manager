@@ -46,19 +46,10 @@ from workflow.api.reports.pnl import CompanyProfitAndLossReport
 from workflow.api.enums import get_enum_choices
 from workflow.views import (
     client_view,
-    edit_job_view_ajax,
-    kanban_view,
     submit_quote_view,
-    time_entry_view,
-    time_overview_view,
-    workshop_view,
-    job_management_view,
 )
-from workflow.views.archive_completed_jobs_view import ArchiveCompleteJobsViews
-from workflow.views.assign_job_view import AssignJobView
 from workflow.views.kpi_view import KPICalendarViews
 from workflow.views.xero import xero_view
-from workflow.views.job_file_view import JobFileView
 from workflow.views.report_view import CompanyProfitAndLossView, ReportsIndexView
 from workflow.views import password_views, stock_view, use_stock_view
 from workflow.views.purchase_order_view import (
@@ -67,26 +58,19 @@ from workflow.views.purchase_order_view import (
     PurchaseOrderCreateView,
     autosave_purchase_order_view,
     delete_purchase_order_view,
-    extract_supplier_quote_data_view
+    extract_supplier_quote_data_view,
 )
-from workflow.views.delivery_receipt_view import DeliveryReceiptListView, DeliveryReceiptCreateView
+from workflow.views.delivery_receipt_view import (
+    DeliveryReceiptListView,
+    DeliveryReceiptCreateView,
+)
 from workflow.views.purchase_order_pdf_view import PurchaseOrderPDFView
 
 urlpatterns = [
     # Redirect to Kanban board
     path("", RedirectView.as_view(url="/kanban/"), name="home"),
     
-    # API endpoints
-    path(
-        "api/autosave-job/",
-        edit_job_view_ajax.autosave_job_view,
-        name="autosave_job_api",
-    ),
-    path(
-        "api/autosave-timesheet/",
-        time_entry_view.autosave_timesheet_view,
-        name="autosave_timesheet-api",
-    ),
+    # API Endpoints
     path(
         "api/autosave-purchase-order/",
         autosave_purchase_order_view,
@@ -95,7 +79,11 @@ urlpatterns = [
     path("api/clients/all/", client_view.all_clients, name="all_clients_api"),
     path("api/client-search/", client_view.ClientSearch, name="client_search_api"),
     path("api/client-detail/", client_view.client_detail, name="client_detail"),
-    path("api/extract-supplier-quote/", extract_supplier_quote_data_view, name="extract_supplier_quote_data"),
+    path(
+        "api/extract-supplier-quote/",
+        extract_supplier_quote_data_view,
+        name="extract_supplier_quote_data",
+    ),
     path(
         "api/quote/<uuid:job_id>/pdf-preview/",
         submit_quote_view.generate_quote_pdf,
@@ -108,13 +96,6 @@ urlpatterns = [
     ),
     path("api/get-env-variable/", server.get_env_variable, name="get_env_variable"),
     path("api/enums/<str:enum_name>/", get_enum_choices, name="get_enum_choices"),
-    # path("api/get-job/", edit_job_view_ajax.get_job_api, name="get_job_api"),
-    path("api/create-job/", edit_job_view_ajax.create_job_api, name="create_job_api"),
-    path(
-        "api/fetch_job_pricing/",
-        edit_job_view_ajax.fetch_job_pricing_api,
-        name="fetch_job_pricing_api",
-    ),
     path(
         "api/reports/company-profit-loss/",
         CompanyProfitAndLossReport.as_view(),
@@ -123,82 +104,28 @@ urlpatterns = [
     path(
         "api/reports/calendar/",
         KPICalendarViews.KPICalendarAPIView.as_view(),
-        name="api_kpi_calendar"
-    ),
-    path(
-        "api/fetch_status_values/",
-        edit_job_view_ajax.api_fetch_status_values,
-        name="fetch_status_values",
-    ),
+        name="api_kpi_calendar",
+    ),    
     # Stock APIs
     path(
         "api/stock/consume/",
         stock_view.consume_stock_api_view,
-        name="consume_stock_api"
+        name="consume_stock_api",
     ),
     path(
-        "api/stock/create/",
-        stock_view.create_stock_api_view,
-        name="create_stock_api"
+        "api/stock/create/", stock_view.create_stock_api_view, name="create_stock_api"
     ),
     path(
         "api/stock/<uuid:stock_id>/deactivate/",
         stock_view.deactivate_stock_api_view,
-        name="deactivate_stock_api"
+        name="deactivate_stock_api",
     ),
     # Stock Search API (for autocomplete)
     path(
         "api/stock/search/",
         stock_view.search_available_stock_api,
-        name="search_stock_api"
+        name="search_stock_api",
     ),
-    path(
-        "api/job/advanced-search/",
-        kanban_view.advanced_search,
-        name="advanced-search"
-    ),
-    path(
-        "api/job/<uuid:job_id>/delete/",
-        edit_job_view_ajax.delete_job,
-        name="delete_job",
-    ),
-    path(
-        "api/job/toggle-complex-job/",
-        edit_job_view_ajax.toggle_complex_job,
-        name="toggle_complex_job",
-    ),
-    path(
-        "api/job/toggle-pricing-type/",
-        edit_job_view_ajax.toggle_pricing_type,
-        name="toggle_pricing_type",
-    ),
-    path(
-        "api/job/completed/",
-        ArchiveCompleteJobsViews.ArchiveCompleteJobsListAPIView.as_view(),
-        name="api_jobs_completed"
-    ),
-    path(
-        "api/job/completed/archive",
-        ArchiveCompleteJobsViews.ArchiveCompleteJobsAPIView.as_view(),
-        name="api_jobs_archive"
-    ),
-    path(
-        "api/job/<uuid:job_id>/assignment",
-        AssignJobView.as_view(),
-        name="api_job_assigment",
-    ),
-    path(
-        "api/job-event/<uuid:job_id>/add-event/",
-        edit_job_view_ajax.add_job_event,
-        name="add-event",
-    ),
-    path("api/job-files/", JobFileView.as_view(), name="job-files"),  # For POST/PUT
-    path(
-        "api/job-files/<int:job_number>", JobFileView.as_view(), name="get-job-file"
-    ),  # To check if file already exists
-    path(
-        "api/job-files/<path:file_path>", JobFileView.as_view(), name="serve-job-file"
-    ),  # For GET/download
     path(
         "api/xero/authenticate/",
         xero_view.xero_authenticate,
@@ -209,25 +136,10 @@ urlpatterns = [
         xero_view.xero_oauth_callback,
         name="xero_oauth_callback",
     ),
-        path(
+    path(
         "api/xero/disconnect/",
         xero_view.xero_disconnect,
         name="xero_disconnect",
-    ),
-    path(
-        "api/xero/purchase-order/<uuid:purchase_order_id>/create/",
-        xero_view.create_xero_purchase_order,
-        name="create_xero_purchase_order",
-    ),
-    path(
-        "api/xero/refresh/",
-        xero_view.refresh_xero_data,
-        name="refresh_xero_data",
-    ),
-    path(
-        "api/xero/success/",
-        xero_view.success_xero_connection,
-        name="xero_success",
     ),
     path(
         "api/xero/sync-stream/",
@@ -260,7 +172,7 @@ urlpatterns = [
         name="xero_sync_info",
     ),
     path(
-        "api/xero/delete_purchase_order/<uuid:purchase_order_id>",  # <-- New URL
+        "api/xero/delete_purchase_order/<uuid:purchase_order_id>",
         xero_view.delete_xero_purchase_order,
         name="delete_xero_purchase_order",
     ),
@@ -277,8 +189,9 @@ urlpatterns = [
     path(
         "api/purchase-orders/<uuid:purchase_order_id>/email/",
         PurchaseOrderEmailView.as_view(),
-        name="purchase-order-email"
+        name="purchase-order-email",
     ),
+    
     # Other URL patterns
     path("clients/", client_view.ClientListView.as_view(), name="list_clients"),
     path(
@@ -287,34 +200,10 @@ urlpatterns = [
         name="update_client",
     ),
     path("client/add/", client_view.AddClient, name="add_client"),
-    path("clients/unused/", client_view.UnusedClientsView.as_view(), name="unused_clients"),
-    # Job URLs
-    # Job Pricing URLs
-    # Entry URLs
-    path("job/", edit_job_view_ajax.create_job_view, name="create_job"),
-    path("job/<uuid:job_id>/", edit_job_view_ajax.edit_job_view_ajax, name="edit_job"),
     path(
-        "job/<uuid:job_id>/workshop-pdf/",
-        workshop_view.WorkshopPDFView.as_view(),
-        name="workshop-pdf",
-    ),
-    path(
-        "job/archive-complete",
-        ArchiveCompleteJobsViews.ArchiveCompleteJobsTemplateView.as_view(),
-        name="archive_complete_jobs"
-    ),
-    path("month-end/", job_management_view.month_end_view, name="month_end"),
-    path(
-        "jobs/<uuid:job_id>/update_status/",
-        kanban_view.update_job_status,
-        name="update_job_status",
-    ),
-    # Kanban views
-    path("kanban/", kanban_view.kanban_view, name="view_kanban"),
-    path(
-        "kanban/fetch_jobs/<str:status>/",
-        kanban_view.fetch_jobs,
-        name="fetch_jobs",
+        "clients/unused/",
+        client_view.UnusedClientsView.as_view(),
+        name="unused_clients",
     ),
     path("reports/", ReportsIndexView.as_view(), name="reports_index"),
     path(
@@ -325,38 +214,7 @@ urlpatterns = [
     path(
         "reports/calendar/",
         KPICalendarViews.KPICalendarTemplateView.as_view(),
-        name="kpi_calendar"
-    ),
-    path(
-        "api/company_defaults/",
-        edit_job_view_ajax.get_company_defaults_api,
-        name="company_defaults_api",
-    ),
-    path(
-        "timesheets/day/<str:date>/<uuid:staff_id>/",
-        time_entry_view.TimesheetEntryView.as_view(),
-        name="timesheet_entry",
-    ),
-    path(
-        "timesheets/overview/",
-        time_overview_view.TimesheetOverviewView.as_view(),
-        name="timesheet_overview",
-    ),
-    path(
-        "timesheets/overview/<str:start_date>/",
-        time_overview_view.TimesheetOverviewView.as_view(),
-        name="timesheet_overview_with_date",
-    ),
-    path(
-        "timesheets/export_to_ims/",
-        time_overview_view.TimesheetOverviewView.as_view(),
-        name="timesheet_export_to_ims",
-    ),
-    # Edit timesheet entries for a specific day
-    path(
-        "timesheets/day/<str:date>/",
-        time_overview_view.TimesheetDailyView.as_view(),
-        name="timesheet_daily_view",
+        name="kpi_calendar",
     ),
     path("xero/", xero_view.XeroIndexView.as_view(), name="xero_index"),
     path(
@@ -364,67 +222,44 @@ urlpatterns = [
         xero_view.xero_sync_progress_page,
         name="xero_sync_progress",
     ),
-    path("xero/unused-clients/", client_view.UnusedClientsView.as_view(), name="xero_unused_clients"),
-
+    path(
+        "xero/unused-clients/",
+        client_view.UnusedClientsView.as_view(),
+        name="xero_unused_clients",
+    ),
     # Purchase Order URLs with purchases prefix
-    path('purchases/purchase-orders/', PurchaseOrderListView.as_view(), name='purchase_orders'),
-    path('purchases/purchase-orders/new/', PurchaseOrderCreateView.as_view(), name='new_purchase_order'),
-    path('purchases/purchase-orders/<uuid:pk>/', PurchaseOrderCreateView.as_view(), name='edit_purchase_order'),
-    path('purchases/purchase-orders/delete/<uuid:pk>/', delete_purchase_order_view, name='delete_purchase_order'),
-
+    path(
+        "purchases/purchase-orders/",
+        PurchaseOrderListView.as_view(),
+        name="purchase_orders",
+    ),
+    path(
+        "purchases/purchase-orders/new/",
+        PurchaseOrderCreateView.as_view(),
+        name="new_purchase_order",
+    ),
+    path(
+        "purchases/purchase-orders/<uuid:pk>/",
+        PurchaseOrderCreateView.as_view(),
+        name="edit_purchase_order",
+    ),
+    path(
+        "purchases/purchase-orders/delete/<uuid:pk>/",
+        delete_purchase_order_view,
+        name="delete_purchase_order",
+    ),
     # Delivery Receipt URLs with purchases prefix
-    path('purchases/delivery-receipts/', DeliveryReceiptListView.as_view(), name='delivery_receipts'),
-    path('purchases/delivery-receipts/<uuid:pk>/', DeliveryReceiptCreateView.as_view(), name='edit_delivery_receipt'),
-    
+    path(
+        "purchases/delivery-receipts/",
+        DeliveryReceiptListView.as_view(),
+        name="delivery_receipts",
+    ),
+    path(
+        "purchases/delivery-receipts/<uuid:pk>/",
+        DeliveryReceiptCreateView.as_view(),
+        name="edit_delivery_receipt",
+    ),
     # Stock Management URLs with purchases prefix
-    path('purchases/use-stock/', use_stock_view.use_stock_view, name='use_stock'),
-    
+    path("purchases/use-stock/", use_stock_view.use_stock_view, name="use_stock"),
     path("__debug__/", include(debug_toolbar.urls)),
-
-    # # LEGACY URLS - app accounts
-    # path("login/", RedirectView.as_view(pattern_name="accounts:login"), name="login"),
-    # path("logout/", RedirectView.as_view(pattern_name="accounts:logout"), name="logout"),
-    # path(
-    #     "password_reset/",
-    #     auth_views.PasswordResetView.as_view(
-    #         template_name="registration/password_reset_form.html",
-    #         email_template_name="registration/password_reset_email.html",
-    #         subject_template_name="registration/password_reset_subject.txt",
-    #     ),
-    #     name="password_reset",
-    # ),
-    # path(
-    #     "password_reset/done/",
-    #     auth_views.PasswordResetDoneView.as_view(
-    #         template_name="registration/password_reset_done.html"
-    #     ),
-    #     name="password_reset_done",
-    # ),
-    # path(
-    #     "reset/<uidb64>/<token>/",
-    #     auth_views.PasswordResetConfirmView.as_view(
-    #         template_name="registration/password_reset_confirm.html"
-    #     ),
-    #     name="password_reset_confirm",
-    # ),
-    # path(
-    #     "reset/done/",
-    #     auth_views.PasswordResetCompleteView.as_view(
-    #         template_name="registration/password_reset_complete.html"
-    #     ),
-    #     name="password_reset_complete",
-    # ),
-    # # Password change views
-    # path(
-    #     "password_change/",
-    #     password_views.SecurityPasswordChangeView.as_view(),
-    #     name="password_change",
-    # ),
-    # path(
-    #     "password_change/done/",
-    #     auth_views.PasswordChangeDoneView.as_view(
-    #         template_name="registration/password_change_done.html"
-    #     ),
-    #     name="password_change_done",
-    # ),
 ]

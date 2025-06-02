@@ -3,28 +3,30 @@ import uuid
 from decimal import Decimal
 
 from django.db import models
-from django.conf import settings
-from workflow.models import Job
+
+from accounts.models import Staff
+
+from job.models import JobPricing
 
 logger = logging.getLogger(__name__)
 
 
 class TimeEntry(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    staff = models.ForeignKey(
-        settings.AUTH_USER_MODEL,  # Reference to Staff model
-        on_delete=models.CASCADE,  # Add comma here
-        related_name="timesheet_entries",
-        help_text="The Staff member who did the work.",
-        null=True,
-        blank=True,
-    )
     job_pricing = models.ForeignKey(
-        Job,
+        JobPricing,
         on_delete=models.CASCADE,
         related_name="time_entries",
         null=False,
         blank=False,
+    )
+    staff = models.ForeignKey(
+        Staff,
+        on_delete=models.CASCADE,
+        related_name="time_entries",
+        help_text="The Staff member who did the work.  Null for estimates/quotes.",
+        null=True,
+        blank=True,
     )
     date = models.DateField(
         null=True,
@@ -69,8 +71,8 @@ class TimeEntry(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name_plural = "Time entries"
-        ordering = ["-date", "-id"]
+        ordering = ["created_at"]
+        db_table = "workflow_timeentry"
 
     def save(self, *args, **kwargs):
         if (
@@ -102,10 +104,7 @@ class TimeEntry(models.Model):
         return self.hours * self.charge_out_rate
 
     def __str__(self):
-        staff_name = self.staff.get_display_name()
+        staff_name = self.staff.get_display_name() if self.staff else "No Staff"
         job_name = self.job_pricing.job.name if self.job_pricing else "No Job"
         time_date = self.date.strftime("%Y-%m-%d")
         return f"{staff_name} - {job_name} on {time_date}"
-    
-    class Meta:
-        db_table = "timesheet_timeentry"
